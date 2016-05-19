@@ -7,7 +7,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
@@ -87,10 +86,7 @@ public class RippleTransitionAnimationView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (centerX == -1 && centerY == -1) {
-            return;
-        } else {
-            //Log.d("onDraw" , "onDraw: " + mRadius + ", " + mRadius + ", " + mRadius);
+        if (centerX != -1 && centerY != -1) {
             canvas.drawCircle(mRadius, mRadius, mRadius, mPaint);
         }
     }
@@ -104,8 +100,6 @@ public class RippleTransitionAnimationView extends View {
     public void layout(int l, int t, int r, int b) {
         calculateCenterOfRipple(r, b);
         super.layout(centerX - mRadius, centerY - mRadius, centerX + mRadius, centerY + mRadius);
-        Log.d("layout" , "layout: " + l + ", " + t + ", " + r + ", " + b);
-        //super.layout(l, t, r, b);
     }
 
     @Override

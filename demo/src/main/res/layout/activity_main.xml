@@ -32,10 +32,14 @@
         android:id="@+id/view_br_animation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/btn_reset"
-        android:layout_alignRight="@id/btn_reset"
-        android:layout_alignEnd="@id/btn_reset"
+        android:layout_alignTop="@+id/btn_reset"
+        android:layout_alignLeft="@+id/btn_reset"
+        android:layout_alignStart="@+id/btn_reset"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
         app:animator_ripple_radius="8dp"
-        app:animator_ripple_duration="animator_long"/>
+        app:animator_ripple_duration="animator_long"
+        />
 
 </RelativeLayout>
