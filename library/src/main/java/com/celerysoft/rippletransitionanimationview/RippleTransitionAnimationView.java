@@ -1,6 +1,5 @@
 package com.celerysoft.rippletransitionanimationview;
 
-import android.animation.AnimatorSet;
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -8,14 +7,14 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 
 /**
- * Created by Celery on 16/5/18.
+ * Created by Celery on 16/5/19.
  */
-public class RippleTransitionAnimationView extends ViewGroup {
+public class RippleTransitionAnimationView extends View {
     private static final int SHORT_DURATION_TIME = 0;
     private static final int MEDIUM_DURATION_TIME = 1;
     private static final int LONG_DURATION_TIME = 2;
@@ -23,14 +22,22 @@ public class RippleTransitionAnimationView extends ViewGroup {
     private Paint mPaint;
 
     private int mRippleColor;
-    private float mRippleRadius;
+    private float mInitialRadius;
     private int mAnimatorDuration;
 
-    private AnimatorSet mAnimatorSet;
+    private int centerX = -1;
+    private int centerY = -1;
+
+    private int mRadius;
+    public int getRadius() {
+        return mRadius;
+    }
+    public void setRadius(int radius) {
+        mRadius = radius;
+    }
 
     private IntEvaluator mEvaluator = new IntEvaluator();
     private float mScale = -1;
-    private RippleView mRippleView;
 
     public RippleTransitionAnimationView(Context context) {
         super(context);
@@ -38,22 +45,25 @@ public class RippleTransitionAnimationView extends ViewGroup {
 
     public RippleTransitionAnimationView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
+        initView(context, attrs);
     }
 
     public RippleTransitionAnimationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        initView(context, attrs);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    private void initView(Context context, AttributeSet attrs) {
+        this.setVisibility(INVISIBLE);
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RippleTransitionAnimationView);
         mRippleColor = a.getColor(R.styleable.RippleTransitionAnimationView_animator_ripple_color, getResources().getColor(R.color.default_ripple_color));
-        mRippleRadius = a.getDimension(R.styleable.RippleTransitionAnimationView_animator_ripple_radius, getResources().getDimension(R.dimen.default_ripple_radius));
+        mInitialRadius = a.getDimension(R.styleable.RippleTransitionAnimationView_animator_ripple_radius, getResources().getDimension(R.dimen.default_ripple_radius));
         mAnimatorDuration = a.getInt(R.styleable.RippleTransitionAnimationView_animator_ripple_duration, SHORT_DURATION_TIME);
         a.recycle();
 
-        mRippleRadius = mRippleRadius > 0 ? mRippleRadius : 1;
+        mInitialRadius = mInitialRadius > 0 ? mInitialRadius : 1;
+        mRadius = (int) mInitialRadius;
 
         switch (mAnimatorDuration) {
             case SHORT_DURATION_TIME:
@@ -73,18 +83,68 @@ public class RippleTransitionAnimationView extends ViewGroup {
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(mRippleColor);
+    }
 
-        mAnimatorSet = new AnimatorSet();
-        mAnimatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (centerX == -1 && centerY == -1) {
+            return;
+        } else {
+            //Log.d("onDraw" , "onDraw: " + mRadius + ", " + mRadius + ", " + mRadius);
+            canvas.drawCircle(mRadius, mRadius, mRadius, mPaint);
+        }
+    }
 
-        mRippleView = new RippleView(getContext());
-        mRippleView.setVisibility(INVISIBLE);
-        LayoutParams layoutParams = new LayoutParams((int) (2 * mRippleRadius), (int) (2 * mRippleRadius));
-        addView(mRippleView, layoutParams);
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        calculateCenterOfRipple(right, bottom);
+    }
+
+    @Override
+    public void layout(int l, int t, int r, int b) {
+        calculateCenterOfRipple(r, b);
+        super.layout(centerX - mRadius, centerY - mRadius, centerX + mRadius, centerY + mRadius);
+        Log.d("layout" , "layout: " + l + ", " + t + ", " + r + ", " + b);
+        //super.layout(l, t, r, b);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
+    }
+
+    private int measureWidth(int measureSpec) {
+        int result;
+
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+        } else {
+            result = getRadius() * 2;
+        }
+
+        return result;
+    }
+
+    private int measureHeight(int measureSpec) {
+        int result;
+
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+        } else {
+            result = getRadius() * 2;
+        }
+
+        return result;
     }
 
     public void performAnimation() {
-        mRippleView.setVisibility(VISIBLE);
+        this.setVisibility(VISIBLE);
 
         final float scale = calculateScale();
 
@@ -96,64 +156,14 @@ public class RippleTransitionAnimationView extends ViewGroup {
 
                 float fraction = currentValue / 1000f;
 
-                mRippleView.setRadius(mEvaluator.evaluate(fraction, (int) (mRippleRadius), (int) (mRippleRadius * scale)));
-                mRippleView.requestLayout();
-                mRippleView.invalidate();
+                RippleTransitionAnimationView.this.setRadius(mEvaluator.evaluate(fraction, (int) (mInitialRadius), (int) (mInitialRadius * scale)));
+                RippleTransitionAnimationView.this.requestLayout();
+                RippleTransitionAnimationView.this.invalidate();
             }
         });
 
+        valueAnimator.setInterpolator(new AccelerateInterpolator());
         valueAnimator.setDuration(mAnimatorDuration).start();
-    }
-
-    public void cancelAnimation() {
-        mAnimatorSet.cancel();
-    }
-
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-//        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-//        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-//
-//        measureChildren(widthMeasureSpec, heightMeasureSpec);
-//
-//        int measureWidth;
-//        int measureHeight;
-//
-//        int childWidth = 0;
-//        int childHeight = 0;
-//
-//        int childCount = getChildCount();
-//        for (int i = 0; i < childCount; ++i) {
-//            View childView = getChildAt(0);
-//
-//            if (childView instanceof RippleView) {
-//                childWidth = childView.getMeasuredWidth();
-//                childHeight = childView.getMeasuredHeight();
-//            }
-//        }
-//
-//        measureWidth = childWidth;
-//        measureHeight = childHeight;
-//
-//        // MeasureSpec.AT_MOST means WRAP_CONTENT
-//        measureWidth = widthMode == MeasureSpec.AT_MOST ? measureWidth : widthSize;
-//        measureHeight = heightMode == MeasureSpec.AT_MOST ? measureHeight : heightSize;
-//        setMeasuredDimension(measureWidth, measureHeight);
-//    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int childViewCount = getChildCount();
-        for (int i = 0; i < childViewCount; ++i) {
-            RippleView childView = (RippleView) getChildAt(i);
-            int left = (r - l) / 2 - childView.getRadius();
-            int right =  left + 2 * childView.getRadius();
-            int top =  (b - t) / 2 - childView.getRadius();
-            int bottom = top + (2 * childView.getRadius());
-            childView.layout(left, top, right, bottom);
-        }
     }
 
     private float calculateScale() {
@@ -162,44 +172,48 @@ public class RippleTransitionAnimationView extends ViewGroup {
         }
 
         int[] location = new int[2];
-        mRippleView.getLocationInWindow(location);
+        this.getLocationInWindow(location);
 
         int screenWidth = Util.getScreenWidthPixels(getContext());
         int screenHeight = Util.getScreenHeightPixels(getContext());
 
-        int x1 = location[0];
-        int x2 = screenWidth - x1 - this.getWidth();
-        float scaleX = Math.max(x1, x2) / mRippleRadius;
+        if (centerX == -1) {
+            centerX = location[0] + (int) mInitialRadius;
+        }
+        if (centerY == -1) {
+            centerY = location[1] + (int) mInitialRadius;
+        }
 
-        int y1 = location[1];
-        int y2 = screenHeight - y1 - this.getHeight();
-        float scaleY = Math.max(y1, y2) / mRippleRadius;
+        float distanceFromTopLeft = calculateDistanceFromPointToPoint(centerX, centerY, 0, 0);
+        float scaleTopLeft = distanceFromTopLeft / mInitialRadius;
 
-        mScale = Math.max(scaleX, scaleY);
+        float distanceFromTopRight = calculateDistanceFromPointToPoint(centerX, centerY, screenWidth, 0);
+        float scaleTopRight = distanceFromTopRight / mInitialRadius;
+
+        float distanceFromBottomLeft = calculateDistanceFromPointToPoint(centerX, centerY, 0, screenHeight);
+        float scaleBottomLeft = distanceFromBottomLeft / mInitialRadius;
+
+        float distanceFromBottomRight = calculateDistanceFromPointToPoint(centerX, centerY, screenWidth, screenHeight);
+        float scaleBottomRight = distanceFromBottomRight / mInitialRadius;
+
+        mScale = Math.max(scaleTopLeft, scaleTopRight);
+        mScale = Math.max(mScale, scaleBottomLeft);
+        mScale = Math.max(mScale, scaleBottomRight);
 
         return mScale;
     }
 
-    private class RippleView extends View {
-        private int mRadius;
-        public int getRadius() {
-            return mRadius;
+    private float calculateDistanceFromPointToPoint(int x1, int y1, int x2, int y2) {
+        double length = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        return (float) length;
+    }
+
+    private void calculateCenterOfRipple(int right, int bottom) {
+        if (centerX == -1) {
+            centerX = (int) (right - mInitialRadius);
         }
-        public void setRadius(int radius) {
-            mRadius = radius;
+        if (centerY == -1) {
+            centerY = (int) (bottom - mInitialRadius);
         }
-
-        public RippleView(Context context) {
-            super(context);
-
-            mRadius = (int) mRippleRadius;
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            canvas.drawCircle(mRadius, mRadius, mRadius, mPaint);
-        }
-
-
     }
 }

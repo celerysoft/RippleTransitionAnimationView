@@ -4,9 +4,9 @@
         <attr name="animator_ripple_color" format="color"/>
         <attr name="animator_ripple_radius" format="dimension"/>
         <attr name="animator_ripple_duration" format="enum">
-            <enum name="a" value="0"/>
-            <enum name="b" value="1"/>
-            <enum name="c" value="2"/>
+            <enum name="animator_short" value="0"/>
+            <enum name="animator_medium" value="1"/>
+            <enum name="animator_long" value="2"/>
         </attr>
     </declare-styleable>
 </resources>

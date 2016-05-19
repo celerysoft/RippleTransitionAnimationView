@@ -6,12 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationView;
+import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup;
 
 /**
  * Created by admin on 16/5/19.
  */
 public class MainActivity extends AppCompatActivity {
-    RippleTransitionAnimationView mAnimationView;
+    RippleTransitionAnimationView mCenterAnimationView;
     RippleTransitionAnimationView mBottomRightAnimationView;
 
     @Override
@@ -20,15 +21,16 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        mAnimationView = (RippleTransitionAnimationView) findViewById(R.id.view_animation);
+        mCenterAnimationView = (RippleTransitionAnimationView) findViewById(R.id.view_animation);
         mBottomRightAnimationView = (RippleTransitionAnimationView) findViewById(R.id.view_br_animation);
+
         View btn = findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mBottomRightAnimationView.setVisibility(View.INVISIBLE);
-                mAnimationView.setVisibility(View.VISIBLE);
-                mAnimationView.performAnimation();
+                mCenterAnimationView.setVisibility(View.VISIBLE);
+                mCenterAnimationView.performAnimation();
             }
         });
 
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAnimationView.setVisibility(View.INVISIBLE);
+                mCenterAnimationView.setVisibility(View.INVISIBLE);
                 mBottomRightAnimationView.setVisibility(View.VISIBLE);
                 mBottomRightAnimationView.performAnimation();
             }
