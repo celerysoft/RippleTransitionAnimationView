@@ -1,11 +1,14 @@
 package com.celerysoft.rippletransitionanimationview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -33,6 +36,34 @@ public class RippleTransitionAnimationView extends View {
     }
     public void setRadius(int radius) {
         mRadius = radius;
+    }
+
+    ValueAnimator mValueAnimator;
+
+    Animator.AnimatorListener mAnimatorListener;
+    public Animator.AnimatorListener getAnimatorListener() {
+        return mAnimatorListener;
+    }
+    public void setAnimatorListener(Animator.AnimatorListener animatorListener) {
+        if (mAnimatorListener != null) {
+            mValueAnimator.removeListener(mAnimatorListener);
+        }
+
+        mAnimatorListener = animatorListener;
+        mValueAnimator.addListener(animatorListener);
+    }
+
+    AnimatorListenerAdapter mAnimatorListenerAdapter;
+    public AnimatorListenerAdapter getAnimatorListenerAdapter() {
+        return mAnimatorListenerAdapter;
+    }
+    public void setAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {
+        if (mAnimatorListenerAdapter != null) {
+            mValueAnimator.removeListener(mAnimatorListenerAdapter);
+        }
+
+        mAnimatorListenerAdapter = animatorListenerAdapter;
+        mValueAnimator.addListener(animatorListenerAdapter);
     }
 
     private IntEvaluator mEvaluator = new IntEvaluator();
@@ -82,6 +113,20 @@ public class RippleTransitionAnimationView extends View {
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(mRippleColor);
+
+
+        mValueAnimator = ValueAnimator.ofInt(1, 1000);
+        mValueAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        RippleTransitionAnimationView.this.setVisibility(INVISIBLE);
+                    }
+                }, 300);
+            }
+        });
     }
 
     @Override
@@ -141,9 +186,8 @@ public class RippleTransitionAnimationView extends View {
         this.setVisibility(VISIBLE);
 
         final float scale = calculateScale();
-
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(1, 1000);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        mValueAnimator.removeAllUpdateListeners();
+        mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int currentValue = (Integer)animation.getAnimatedValue();
@@ -155,9 +199,9 @@ public class RippleTransitionAnimationView extends View {
                 RippleTransitionAnimationView.this.invalidate();
             }
         });
+        mValueAnimator.setInterpolator(new AccelerateInterpolator());
 
-        valueAnimator.setInterpolator(new AccelerateInterpolator());
-        valueAnimator.setDuration(mAnimatorDuration).start();
+        mValueAnimator.setDuration(mAnimatorDuration).start();
     }
 
     private float calculateScale() {

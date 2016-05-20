@@ -5,14 +5,7 @@
               android:layout_height="match_parent">
 
     <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="CLICK"/>
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_reset"
+        android:id="@+id/first_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -21,20 +14,12 @@
         android:text="CLICK"/>
 
     <com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationView
-        android:id="@+id/view_animation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:animator_ripple_radius="8dp"
-        app:animator_ripple_duration="animator_long"/>
-
-    <com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationView
         android:id="@+id/view_br_animation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_reset"
-        android:layout_alignLeft="@+id/btn_reset"
-        android:layout_alignStart="@+id/btn_reset"
+        android:layout_alignTop="@+id/first_btn"
+        android:layout_alignLeft="@+id/first_btn"
+        android:layout_alignStart="@+id/first_btn"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
