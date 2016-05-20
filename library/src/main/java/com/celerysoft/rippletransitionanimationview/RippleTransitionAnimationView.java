@@ -24,8 +24,18 @@ public class RippleTransitionAnimationView extends View {
     private Paint mPaint;
 
     private int mRippleColor;
+    public void setRippleColor(int rippleColor) {
+        mRippleColor = rippleColor;
+        if (mPaint != null) {
+            mPaint.setColor(rippleColor);
+        }
+    }
+
     private float mInitialRadius;
     private int mAnimatorDuration;
+    public void setAnimatorDuration(int animatorDuration) {
+        mAnimatorDuration = animatorDuration;
+    }
 
     private int centerX = -1;
     private int centerY = -1;
