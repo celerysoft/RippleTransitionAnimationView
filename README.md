@@ -69,6 +69,7 @@ then change your layout like this
 
 Add some listener in the Activity( or Fragment) to make it work
 
+```
 @Override
 protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -105,6 +106,7 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 
     }
 }
+```
 
 ### You can also see the demo to get started
 [demo](https://github.com/celerysoft/RippleTransitionAnimationView/tree/master/demo).
