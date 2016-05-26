@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -16,6 +17,7 @@ import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationVie
  */
 public class FirstActivity extends AppCompatActivity {
     RippleTransitionAnimationView mBottomRightAnimationView;
+    FloatingActionButton mFloatingActionButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,18 +31,27 @@ public class FirstActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animation) {
                 Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
                 startActivity(intent);
+                FirstActivity.this.finish();
                 overridePendingTransition(R.anim.ripple_alpha_in, R.anim.ripple_alpha_out);
             }
         });
 
-        View btnReset = findViewById(R.id.first_btn);
-        if (btnReset != null) {
-            btnReset.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.first_btn);
+        if (mFloatingActionButton != null) {
+
+            mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mBottomRightAnimationView.performAnimation();
+                    mFloatingActionButton.hide();
+                    mFloatingActionButton.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBottomRightAnimationView.performAnimation();
+                        }
+                    }, 150);
                 }
             });
+
         }
     }
 }

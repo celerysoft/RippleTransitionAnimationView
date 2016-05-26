@@ -8,14 +8,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationView;
 import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup;
 
 /**
- * Created by Celery on 16/5/20.
+ * Created by Celery on 16/5/26.
  *
  */
-public class SecondActivity extends AppCompatActivity {
+public class ThirdActivity extends AppCompatActivity {
     RippleTransitionAnimationViewGroup mAnimationViewGroup;
 
     @Override
@@ -23,21 +22,21 @@ public class SecondActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.ripple_alpha_in, R.anim.ripple_alpha_out);
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_second);
+        setContentView(R.layout.activity_third);
 
 
         mAnimationViewGroup = (RippleTransitionAnimationViewGroup) findViewById(R.id.view_group_animation);
         mAnimationViewGroup.setAnimatorListenerAdapter(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
+                Intent intent = new Intent(ThirdActivity.this, FirstActivity.class);
                 startActivity(intent);
-                SecondActivity.this.finish();
+                ThirdActivity.this.finish();
                 overridePendingTransition(R.anim.ripple_alpha_in, R.anim.ripple_alpha_out);
             }
         });
 
-        View btnReset = findViewById(R.id.second_btn);
+        View btnReset = findViewById(R.id.third_btn);
         if (btnReset != null) {
             btnReset.setOnClickListener(new View.OnClickListener() {
                 @Override

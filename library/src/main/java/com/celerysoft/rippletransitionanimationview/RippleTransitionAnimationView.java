@@ -15,6 +15,7 @@ import android.view.animation.AccelerateInterpolator;
 
 /**
  * Created by Celery on 16/5/19.
+ *
  */
 public class RippleTransitionAnimationView extends View {
     private static final int SHORT_DURATION_TIME = 0;
@@ -37,8 +38,23 @@ public class RippleTransitionAnimationView extends View {
         mAnimatorDuration = animatorDuration;
     }
 
-    private int centerX = -1;
-    private int centerY = -1;
+    private int mCenterX = -1;
+    protected int getCenterX() {
+        return mCenterX;
+    }
+    protected void setCenterX(int centerX) {
+        mCenterX = centerX;
+        mScale = -1;
+    }
+
+    private int mCenterY = -1;
+    protected int getCenterY() {
+        return mCenterY;
+    }
+    protected void setCenterY(int centerY) {
+        mCenterY = centerY;
+        mScale = -1;
+    }
 
     private int mRadius;
     public int getRadius() {
@@ -141,7 +157,7 @@ public class RippleTransitionAnimationView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (centerX != -1 && centerY != -1) {
+        if (mCenterX != -1 && mCenterY != -1) {
             canvas.drawCircle(mRadius, mRadius, mRadius, mPaint);
         }
     }
@@ -154,7 +170,11 @@ public class RippleTransitionAnimationView extends View {
     @Override
     public void layout(int l, int t, int r, int b) {
         calculateCenterOfRipple(r, b);
-        super.layout(centerX - mRadius, centerY - mRadius, centerX + mRadius, centerY + mRadius);
+        super.layout(mCenterX - mRadius, mCenterY - mRadius, mCenterX + mRadius, mCenterY + mRadius);
+    }
+
+    protected void manualLayout(int l, int t, int r, int b) {
+        super.layout(l, t, r, b);
     }
 
     @Override
@@ -192,6 +212,52 @@ public class RippleTransitionAnimationView extends View {
         return result;
     }
 
+    private float calculateScale() {
+        if (mScale != -1) {
+            return mScale;
+        }
+
+        int[] location = new int[2];
+        this.getLocationInWindow(location);
+
+        int screenWidth = Util.getScreenWidthPixels(getContext());
+        int screenHeight = Util.getScreenHeightPixels(getContext());
+
+        if (mCenterX == -1) {
+            mCenterX = location[0] + (int) mInitialRadius;
+        }
+        if (mCenterY == -1) {
+            mCenterY = location[1] + (int) mInitialRadius;
+        }
+
+        float distanceFromTopLeft = Util.calculateDistanceFromPointToPoint(mCenterX, mCenterY, 0, 0);
+        float scaleTopLeft = distanceFromTopLeft / mInitialRadius;
+
+        float distanceFromTopRight = Util.calculateDistanceFromPointToPoint(mCenterX, mCenterY, screenWidth, 0);
+        float scaleTopRight = distanceFromTopRight / mInitialRadius;
+
+        float distanceFromBottomLeft = Util.calculateDistanceFromPointToPoint(mCenterX, mCenterY, 0, screenHeight);
+        float scaleBottomLeft = distanceFromBottomLeft / mInitialRadius;
+
+        float distanceFromBottomRight = Util.calculateDistanceFromPointToPoint(mCenterX, mCenterY, screenWidth, screenHeight);
+        float scaleBottomRight = distanceFromBottomRight / mInitialRadius;
+
+        mScale = Math.max(scaleTopLeft, scaleTopRight);
+        mScale = Math.max(mScale, scaleBottomLeft);
+        mScale = Math.max(mScale, scaleBottomRight);
+
+        return mScale;
+    }
+
+    private void calculateCenterOfRipple(int right, int bottom) {
+        if (mCenterX == -1) {
+            mCenterX = (int) (right - mInitialRadius);
+        }
+        if (mCenterY == -1) {
+            mCenterY = (int) (bottom - mInitialRadius);
+        }
+    }
+
     public void performAnimation() {
         this.setVisibility(VISIBLE);
 
@@ -214,54 +280,7 @@ public class RippleTransitionAnimationView extends View {
         mValueAnimator.setDuration(mAnimatorDuration).start();
     }
 
-    private float calculateScale() {
-        if (mScale != -1) {
-            return mScale;
-        }
-
-        int[] location = new int[2];
-        this.getLocationInWindow(location);
-
-        int screenWidth = Util.getScreenWidthPixels(getContext());
-        int screenHeight = Util.getScreenHeightPixels(getContext());
-
-        if (centerX == -1) {
-            centerX = location[0] + (int) mInitialRadius;
-        }
-        if (centerY == -1) {
-            centerY = location[1] + (int) mInitialRadius;
-        }
-
-        float distanceFromTopLeft = calculateDistanceFromPointToPoint(centerX, centerY, 0, 0);
-        float scaleTopLeft = distanceFromTopLeft / mInitialRadius;
-
-        float distanceFromTopRight = calculateDistanceFromPointToPoint(centerX, centerY, screenWidth, 0);
-        float scaleTopRight = distanceFromTopRight / mInitialRadius;
-
-        float distanceFromBottomLeft = calculateDistanceFromPointToPoint(centerX, centerY, 0, screenHeight);
-        float scaleBottomLeft = distanceFromBottomLeft / mInitialRadius;
-
-        float distanceFromBottomRight = calculateDistanceFromPointToPoint(centerX, centerY, screenWidth, screenHeight);
-        float scaleBottomRight = distanceFromBottomRight / mInitialRadius;
-
-        mScale = Math.max(scaleTopLeft, scaleTopRight);
-        mScale = Math.max(mScale, scaleBottomLeft);
-        mScale = Math.max(mScale, scaleBottomRight);
-
-        return mScale;
-    }
-
-    private float calculateDistanceFromPointToPoint(int x1, int y1, int x2, int y2) {
-        double length = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-        return (float) length;
-    }
-
-    private void calculateCenterOfRipple(int right, int bottom) {
-        if (centerX == -1) {
-            centerX = (int) (right - mInitialRadius);
-        }
-        if (centerY == -1) {
-            centerY = (int) (bottom - mInitialRadius);
-        }
+    public void cancelAnimation() {
+        mValueAnimator.cancel();
     }
 }

@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/first_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:text="CLICK"/>
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_media_play"/>
 
     <com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationView
         android:id="@+id/view_br_animation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/first_btn"
-        android:layout_alignLeft="@+id/first_btn"
-        android:layout_alignStart="@+id/first_btn"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        app:animator_ripple_radius="8dp"
-        app:animator_ripple_duration="animator_long"
-        />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:animator_ripple_color="@color/colorAccent"
+        app:animator_ripple_radius="28dp"
+        app:animator_ripple_duration="animator_long"/>
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
