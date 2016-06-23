@@ -3,6 +3,7 @@ package com.celerysoft.rippletransitionanimationview;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,8 @@ public class RippleTransitionAnimationViewGroup extends ViewGroup {
 
     private int mInitialRadius = -1;
 
-    ViewGroup mRootView;
+    private ViewGroup mRootView;
+    private ViewGroup mParentView;
 
     public RippleTransitionAnimationViewGroup(Context context) {
         super(context);
@@ -43,9 +45,13 @@ public class RippleTransitionAnimationViewGroup extends ViewGroup {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
+        mParentView = (ViewGroup) getRootView().findViewById(R.id.ripple_animation_parent);
         mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
-
-        mRootView.addView(mRippleView);
+        if (mParentView != null) {
+            mParentView.addView(mRippleView);
+        } else {
+            mRootView.addView(mRippleView);
+        }
     }
 
     @Override
@@ -113,11 +119,45 @@ public class RippleTransitionAnimationViewGroup extends ViewGroup {
         int[] location = new int[2];
         this.getLocationInWindow(location);
 
-        if (mCenterX == -1) {
-            mCenterX = location[0] + getMeasuredWidth() / 2;
-        }
-        if (mCenterY == -1) {
-            mCenterY = location[1] ;
+        if (mParentView != null) {
+            /****************************************************************
+             |--------------------------------------------------------------|
+             |Status Bar                                                    |
+             |--------------------------------------------------------------|
+             |Root View                                                     |
+             |      --------------------------------------------------------|
+             |      |Parent View                                            |
+             |      |                                                       |
+             |      |                                                       |
+             |      |          ------------------------------------         |
+             |      |          |RippleTransitionAnimationViewGroup|         |
+             |      |          ------------------------------------         |
+             |      |                                                       |
+             |      |                                                       |
+             |--------------------------------------------------------------|
+             ****************************************************************/
+            int[] rootViewLocation = new int[2];
+            mRootView.getLocationInWindow(rootViewLocation);
+
+            int[] parentViewLocation = new int[2];
+            mParentView.getLocationInWindow(parentViewLocation);
+
+            if (mCenterX == -1) {
+                mCenterX = location[0] + getMeasuredWidth() / 2 - parentViewLocation[0];
+            }
+            if (mCenterY == -1) {
+                mCenterY = location[1] - parentViewLocation[1] + rootViewLocation[1];
+            }
+
+        } else {
+
+            if (mCenterX == -1) {
+                mCenterX = location[0] + getMeasuredWidth() / 2;
+            }
+            if (mCenterY == -1) {
+                mCenterY = location[1];
+            }
+
         }
 
         mRippleView.setCenterX(mCenterX);
