@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RippleTransitionAnimationView">
+    <declare-styleable name="Wrapper">
+        <attr name="animator_ripple_background" format="color"/>
         <attr name="animator_ripple_color" format="color"/>
         <attr name="animator_ripple_radius" format="dimension"/>
         <attr name="animator_ripple_duration" format="enum">
@@ -8,5 +9,10 @@
             <enum name="animator_medium" value="1"/>
             <enum name="animator_long" value="2"/>
         </attr>
+        <attr name="animator_ripple_type" format="enum">
+            <enum name="fill_in" value="0"/>
+            <enum name="wipe_out" value="1"/>
+        </attr>
+        <attr name="animator_ripple_auto_hide" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -1,4 +1,4 @@
-package com.celerysoft.rippletransitionanimationview;
+package com.celerysoft.ripple.util;
 
 import android.content.Context;
 

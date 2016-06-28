@@ -10,14 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup;
+import com.celerysoft.ripple.Wrapper;
 
 /**
  * Created by Celery on 16/5/26.
  *
  */
 public class ThirdActivity extends AppCompatActivity {
-    RippleTransitionAnimationViewGroup mAnimationViewGroup;
+    Wrapper mAnimationViewGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,8 +34,8 @@ public class ThirdActivity extends AppCompatActivity {
         }
 
 
-        mAnimationViewGroup = (RippleTransitionAnimationViewGroup) findViewById(R.id.view_group_animation);
-        mAnimationViewGroup.setAnimatorListenerAdapter(new AnimatorListenerAdapter() {
+        mAnimationViewGroup = (Wrapper) findViewById(R.id.view_group_animation);
+        mAnimationViewGroup.addAnimatorListenerAdapter(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 Intent intent = new Intent(ThirdActivity.this, FirstActivity.class);

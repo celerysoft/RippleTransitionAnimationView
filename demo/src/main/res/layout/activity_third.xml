@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup
+        <com.celerysoft.ripple.Wrapper
             android:id="@+id/view_group_animation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +35,8 @@
             android:layout_marginTop="16dp"
             app:animator_ripple_duration="animator_long"
             app:animator_ripple_color="@color/colorPrimaryDark"
-            >
+            app:animator_ripple_auto_hide="false"
+            app:animator_ripple_type="fill_in">
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/third_btn"
                 android:layout_width="wrap_content"
@@ -43,7 +44,7 @@
                 android:textColor="@android:color/white"
                 android:background="@color/colorPrimaryDark"
                 android:text="PLAY"/>
-        </com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup>
+        </com.celerysoft.ripple.Wrapper>
 
     </RelativeLayout>
 

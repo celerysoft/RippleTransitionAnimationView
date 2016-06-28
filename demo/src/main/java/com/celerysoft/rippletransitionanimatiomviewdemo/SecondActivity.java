@@ -8,15 +8,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationView;
-import com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup;
+import com.celerysoft.ripple.Wrapper;
 
 /**
  * Created by Celery on 16/5/20.
  *
  */
 public class SecondActivity extends AppCompatActivity {
-    RippleTransitionAnimationViewGroup mAnimationViewGroup;
+    Wrapper mAnimationViewGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,8 +25,8 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
 
 
-        mAnimationViewGroup = (RippleTransitionAnimationViewGroup) findViewById(R.id.view_group_animation);
-        mAnimationViewGroup.setAnimatorListenerAdapter(new AnimatorListenerAdapter() {
+        mAnimationViewGroup = (Wrapper) findViewById(R.id.view_group_animation);
+        mAnimationViewGroup.addAnimatorListenerAdapter(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);

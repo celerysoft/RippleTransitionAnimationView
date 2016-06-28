@@ -1,4 +1,4 @@
-package com.celerysoft.rippletransitionanimationview;
+package com.celerysoft.ripple;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -8,37 +8,66 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.celerysoft.ripple.util.Const;
+import com.celerysoft.ripple.view.RippleInView;
+import com.celerysoft.ripple.view.RippleOutView;
+import com.celerysoft.ripple.view.RippleView;
+import com.celerysoft.rippletransitionanimationview.R;
+
 /**
  * Created by Celery on 16/5/18.
  *
  */
-public class RippleTransitionAnimationViewGroup extends ViewGroup {
-    private RippleTransitionAnimationView mRippleView;
+public class Wrapper extends ViewGroup {
+    /* Animation Type */
+    public static final int FILL_IN = 0;
+    public static final int WIPE_OUT = 1;
+
+    private RippleView mRippleView;
 
     private int mCenterX = -1;
     private int mCenterY = -1;
 
-    private int mInitialRadius = -1;
+    protected float mInitialRadius = -1;
+    //protected int mRippleBackgroundColor;
+    //protected int mRippleColor;
+    //protected int mAnimatorDuration;
+    protected boolean mAutoHide = true;
+
+    private int mRippleType;
 
     private ViewGroup mRootView;
     private ViewGroup mParentView;
 
-    public RippleTransitionAnimationViewGroup(Context context) {
+    public Wrapper(Context context) {
         super(context);
     }
 
-    public RippleTransitionAnimationViewGroup(Context context, AttributeSet attrs) {
+    public Wrapper(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public RippleTransitionAnimationViewGroup(Context context, AttributeSet attrs, int defStyleAttr) {
+    public Wrapper(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
-        mRippleView = new RippleTransitionAnimationView(context, attrs);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Wrapper);
+//        mRippleBackgroundColor = a.getColor(R.styleable.Wrapper_animator_ripple_background, getResources().getColor(android.R.color.darker_gray));
+//        mRippleColor = a.getColor(R.styleable.Wrapper_animator_ripple_color, getResources().getColor(R.color.default_ripple_color));
+//        mAnimatorDuration = a.getInt(R.styleable.Wrapper_animator_ripple_duration, Const.SHORT_DURATION_TIME);
+        mInitialRadius = a.getDimension(R.styleable.Wrapper_animator_ripple_radius, getResources().getDimension(R.dimen.default_ripple_radius));
+        mRippleType = a.getInt(R.styleable.Wrapper_animator_ripple_type, FILL_IN);
+        mAutoHide = a.getBoolean(R.styleable.Wrapper_animator_ripple_auto_hide, true);
+        a.recycle();
+
+        if (mRippleType == FILL_IN) {
+            mRippleView = new RippleInView(context, attrs);
+        } else if (mRippleType == WIPE_OUT) {
+            mRippleView = new RippleOutView(context, attrs);
+        }
     }
 
     @Override
@@ -49,8 +78,36 @@ public class RippleTransitionAnimationViewGroup extends ViewGroup {
         mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
         if (mParentView != null) {
             mParentView.addView(mRippleView);
+
+            if (mRippleType == WIPE_OUT) {
+                mParentView.bringChildToFront(this);
+                mParentView.requestLayout();
+                mParentView.invalidate();
+            }
+
+            mParentView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mRippleView.setForcedWidth(mParentView.getWidth());
+                    mRippleView.setForcedHeight(mParentView.getHeight());
+                }
+            });
         } else {
             mRootView.addView(mRippleView);
+
+            if (mRippleType == WIPE_OUT) {
+                mRootView.bringChildToFront(this);
+                mRootView.requestLayout();
+                mRootView.invalidate();
+            }
+
+            mRootView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mRippleView.setForcedWidth(mRootView.getWidth());
+                    mRippleView.setForcedHeight(mRootView.getHeight());
+                }
+            });
         }
     }
 
@@ -88,26 +145,28 @@ public class RippleTransitionAnimationViewGroup extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        calculateCenterOfRippleView();
-        calculateInitialRadiusOfRippleView();
+        if (getVisibility() == VISIBLE) {
+            calculateCenterOfRippleView();
+            calculateInitialRadiusOfRippleView();
 
-        int childViewCount = getChildCount();
+            int childViewCount = getChildCount();
 
-        int centerX = (r - l) / 2;
-        int centerY = (b - t) / 2;
+            int centerX = (r - l) / 2;
+            int centerY = (b - t) / 2;
 
-        for (int i = 0; i < childViewCount; ++i) {
-            View childView = getChildAt(i);
+            for (int i = 0; i < childViewCount; ++i) {
+                View childView = getChildAt(i);
 
-            int width = childView.getMeasuredWidth();
-            int height = childView.getMeasuredHeight();
+                int width = childView.getMeasuredWidth();
+                int height = childView.getMeasuredHeight();
 
-            int left = centerX - width / 2;
-            int right = centerX + width / 2;
-            int top = centerY - height / 2;
-            int bottom = centerY + height / 2;
+                int left = centerX - width / 2;
+                int right = centerX + width / 2;
+                int top = centerY - height / 2;
+                int bottom = centerY + height / 2;
 
-            childView.layout(left, top, right, bottom);
+                childView.layout(left, top, right, bottom);
+            }
         }
     }
 
@@ -169,12 +228,27 @@ public class RippleTransitionAnimationViewGroup extends ViewGroup {
             return;
         }
 
-        mInitialRadius = Math.min(getMeasuredWidth(), getMeasuredHeight());
+        mInitialRadius = Math.min(getMeasuredWidth() / 2, getMeasuredHeight() / 2);
 
-        mRippleView.setRadius(mInitialRadius);
+        mRippleView.setRadius((int) mInitialRadius);
     }
 
+    private AnimatorListenerAdapter mAnimatorListenerAdapter;
     public void performAnimation() {
+        if (mAutoHide) {
+            if (mAnimatorListenerAdapter == null) {
+                mAnimatorListenerAdapter = new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+
+                        setVisibility(GONE);
+                    }
+                };
+            }
+            mRippleView.addAnimatorListenerAdapter(mAnimatorListenerAdapter);
+        }
+
         mRippleView.performAnimation();
     }
 
@@ -190,11 +264,19 @@ public class RippleTransitionAnimationViewGroup extends ViewGroup {
         mRippleView.setAnimatorDuration(animatorDuration);
     }
 
-    public void setAnimatorListener(Animator.AnimatorListener animatorListener) {
-        mRippleView.setAnimatorListener(animatorListener);
+    public void addAnimatorListener(Animator.AnimatorListener animatorListener) {
+        mRippleView.addAnimatorListener(animatorListener);
     }
 
-   public void setAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {
-        mRippleView.setAnimatorListenerAdapter(animatorListenerAdapter);
+    public void removeAnimatorListener(Animator.AnimatorListener animatorListener) {
+        mRippleView.removeAnimatorListener(animatorListener);
+    }
+
+    public void addAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {
+       mRippleView.addAnimatorListenerAdapter(animatorListenerAdapter);
+    }
+
+    public void removeAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {
+        mRippleView.removeAnimatorListenerAdapter(animatorListenerAdapter);
     }
 }
