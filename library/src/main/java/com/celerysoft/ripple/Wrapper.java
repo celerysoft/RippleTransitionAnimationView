@@ -4,11 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
-import com.celerysoft.ripple.util.Const;
 import com.celerysoft.ripple.view.RippleInView;
 import com.celerysoft.ripple.view.RippleOutView;
 import com.celerysoft.ripple.view.RippleView;
@@ -74,15 +75,31 @@ public class Wrapper extends ViewGroup {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
+        if (!isInEditMode()) {
+            setupRippleView();
+        }
+    }
+
+    private void setupRippleView() {
         mParentView = (ViewGroup) getRootView().findViewById(R.id.ripple_animation_parent);
         mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
         if (mParentView != null) {
-            mParentView.addView(mRippleView);
+            if (mParentView instanceof RelativeLayout) {
+                if (mRippleView.getParent() == null) {
+                    mParentView.addView(mRippleView, 0, new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+                }
+            } else {
+                mParentView.addView(mRippleView);
+            }
 
             if (mRippleType == WIPE_OUT) {
                 mParentView.bringChildToFront(this);
-                mParentView.requestLayout();
-                mParentView.invalidate();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    mParentView.requestLayout();
+                    mParentView.invalidate();
+                }
+//                mParentView.requestLayout();
+//                mParentView.invalidate();
             }
 
             mParentView.post(new Runnable() {
@@ -93,12 +110,23 @@ public class Wrapper extends ViewGroup {
                 }
             });
         } else {
+//            if (mRootView instanceof RelativeLayout) {
+//                if (mRootView.getParent() == null) {
+//                    mRootView.addView(mRippleView, 0, new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//                }
+//            } else {
+//                mRootView.addView(mRippleView);
+//            }
             mRootView.addView(mRippleView);
 
             if (mRippleType == WIPE_OUT) {
                 mRootView.bringChildToFront(this);
-                mRootView.requestLayout();
-                mRootView.invalidate();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    mRootView.requestLayout();
+                    mRootView.invalidate();
+                }
+//                mRootView.requestLayout();
+//                mRootView.invalidate();
             }
 
             mRootView.post(new Runnable() {
@@ -234,21 +262,40 @@ public class Wrapper extends ViewGroup {
     }
 
     private AnimatorListenerAdapter mAnimatorListenerAdapter;
-    public void performAnimation() {
-        if (mAutoHide) {
-            if (mAnimatorListenerAdapter == null) {
-                mAnimatorListenerAdapter = new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
+    private void prePerformAnimation() {
+        if (mAnimatorListenerAdapter == null) {
+            mAnimatorListenerAdapter = new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
 
-                        setVisibility(GONE);
-                    }
-                };
-            }
+                    beforeAnimationStart();
+                }
+            };
             mRippleView.addAnimatorListenerAdapter(mAnimatorListenerAdapter);
         }
+    }
 
+    private void beforeAnimationStart() {
+        ViewGroup v;
+        if (mParentView != null) {
+            v = mParentView;
+        } else {
+            v = mRootView;
+        }
+        v.bringChildToFront(mRippleView);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            v.requestLayout();
+            v.invalidate();
+        }
+
+        if (mAutoHide) {
+            setVisibility(GONE);
+        }
+    }
+
+    public void performAnimation() {
+        prePerformAnimation();
         mRippleView.performAnimation();
     }
 

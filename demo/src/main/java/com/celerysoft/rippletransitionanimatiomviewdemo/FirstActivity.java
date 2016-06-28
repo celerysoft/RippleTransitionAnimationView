@@ -36,7 +36,7 @@ public class FirstActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("First Activity");
+            actionBar.setTitle("1. First Activity");
         }
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);

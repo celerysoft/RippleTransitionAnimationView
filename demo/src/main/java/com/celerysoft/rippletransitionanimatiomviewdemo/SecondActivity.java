@@ -5,7 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.celerysoft.ripple.Wrapper;
@@ -24,6 +26,12 @@ public class SecondActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_second);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("2. Second Activity");
+        }
 
         mAnimationViewGroup = (Wrapper) findViewById(R.id.view_group_animation);
         mAnimationViewGroup.addAnimatorListenerAdapter(new AnimatorListenerAdapter() {

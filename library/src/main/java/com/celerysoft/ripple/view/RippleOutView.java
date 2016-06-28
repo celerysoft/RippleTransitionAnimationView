@@ -22,8 +22,6 @@ public class RippleOutView extends RippleView {
     private Bitmap mBitmap;
     private Canvas mCanvas;
 
-    private int mRippleBackgroundColor = -1;
-
     private float mScale = -1;
 
     public RippleOutView(Context context) {
@@ -32,7 +30,6 @@ public class RippleOutView extends RippleView {
 
     public RippleOutView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView(context, attrs);
     }
 
     @Override
@@ -58,9 +55,7 @@ public class RippleOutView extends RippleView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (mCenterX != -1 && mCenterY != -1) {
-            Log.d("LOG", mRadius + "");
-            Log.d("LOG", "left: " + getLeft() + ", right: " + getRight() + ", top: " + getTop() + ", bottom: " + getBottom());
+        if (mCenterX != -1 && mCenterY != -1 && mCanvas != null) {
             mCanvas.drawCircle(mCenterX, mCenterY, mRadius, mPaint);
         }
 
@@ -70,78 +65,6 @@ public class RippleOutView extends RippleView {
 
     }
 
-//    @Override
-//    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-//        super.onLayout(changed, left, top, right, bottom);
-//    }
-//
-//    @Override
-//    public void layout(int l, int t, int r, int b) {
-//        calculateCenterOfRipple(r, b);
-//        super.layout(mCenterX - mRadius, mCenterY - mRadius, mCenterX + mRadius, mCenterY + mRadius);
-//    }
-//
-//    protected void manualLayout(int l, int t, int r, int b) {
-//        super.layout(l, t, r, b);
-//    }
-//
-//    @Override
-//    protected void onAttachedToWindow() {
-//        super.onAttachedToWindow();
-//
-//        mParentView = (ViewGroup) getRootView().findViewById(R.id.ripple_animation_parent);
-//        mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
-//    }
-//
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        if (mForcedWidth != -1 && mForcedHeight != -1) {
-//            setMeasuredDimension(mForcedWidth, mForcedHeight);
-//        } else {
-//            setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
-//        }
-//    }
-//
-//    private int measureWidth(int measureSpec) {
-//        int result;
-//
-//        int specMode = MeasureSpec.getMode(measureSpec);
-//        int specSize = MeasureSpec.getSize(measureSpec);
-//
-//        if (specMode == MeasureSpec.EXACTLY) {
-//            result = specSize;
-//        } else {
-//            //result = getRadius() * 2;
-//            if (mParentView != null) {
-//                result = mParentView.getWidth();
-//            } else {
-//                result = mRootView.getWidth();
-//            }
-//        }
-//
-//        return result != 0 ? result : specSize;
-//    }
-//
-//    private int measureHeight(int measureSpec) {
-//        int result;
-//
-//        int specMode = MeasureSpec.getMode(measureSpec);
-//        int specSize = MeasureSpec.getSize(measureSpec);
-//
-//        if (specMode == MeasureSpec.EXACTLY) {
-//            result = specSize;
-//        } else {
-//            //result = getRadius() * 2;
-//            if (mParentView != null) {
-//                result = mParentView.getHeight();
-//            } else {
-//                result = mRootView.getHeight();
-//            }
-//        }
-//
-//        return result != 0 ? result : specSize;
-//    }
-
     /**
      *
      * @param colorARGB should like 0x8800ff00
@@ -150,8 +73,9 @@ public class RippleOutView extends RippleView {
      * @return
      */
     private Bitmap createBitmapFromARGB(int colorARGB, int width, int height) {
-        colorARGB |= 0xFF000000;
-        colorARGB = 0xFFFFFFFF;
+//        String a = "";
+//        colorARGB |= 0xFF000000;
+//        colorARGB = colorARGB | 0xFF000000;
 
         int[] argb = new int[width * height];
 
@@ -258,27 +182,4 @@ public class RippleOutView extends RippleView {
     protected void prePerformAnimation() {
         initCoverBitmap();
     }
-
-    //    @Override
-//    public void performAnimation() {
-//        this.setVisibility(VISIBLE);
-//
-//        final float scale = calculateScale();
-//        mValueAnimator.removeAllUpdateListeners();
-//        mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                int currentValue = (Integer)animation.getAnimatedValue();
-//
-//                float fraction = currentValue / 1000f;
-//
-//                RippleOutView.this.setRadius(mEvaluator.evaluate(fraction, (int) (mInitialRadius), (int) (mInitialRadius * scale)));
-//                RippleOutView.this.requestLayout();
-//                RippleOutView.this.invalidate();
-//            }
-//        });
-//        mValueAnimator.setInterpolator(new AccelerateInterpolator());
-//
-//        mValueAnimator.setDuration(mAnimatorDuration).start();
-//    }
 }

@@ -30,7 +30,7 @@ public class ThirdActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("Don't overflow parent");
+            actionBar.setTitle("3. Don't overflow parent");
         }
 
 

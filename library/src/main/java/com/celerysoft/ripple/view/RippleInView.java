@@ -36,10 +36,6 @@ public class RippleInView extends RippleView {
         super.layout(mCenterX - mRadius, mCenterY - mRadius, mCenterX + mRadius, mCenterY + mRadius);
     }
 
-    protected void manualLayout(int l, int t, int r, int b) {
-        super.layout(l, t, r, b);
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));

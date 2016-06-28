@@ -1,24 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.celerysoft.ripple.Wrapper
-        android:id="@+id/view_group_animation"
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:animator_ripple_duration="animator_long"
-        app:animator_ripple_auto_hide="false"
-        app:animator_ripple_color="@color/colorPrimary">
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/second_btn"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@id/ripple_animation_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.celerysoft.ripple.Wrapper
+            android:id="@+id/view_group_animation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:background="@color/colorPrimary"
-            android:text="PLAY"/>
-    </com.celerysoft.ripple.Wrapper>
+            android:layout_centerInParent="true"
+            app:animator_ripple_duration="animator_long"
+            app:animator_ripple_auto_hide="false"
+            app:animator_ripple_color="@color/colorPrimary">
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/second_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:text="PLAY"/>
+        </com.celerysoft.ripple.Wrapper>
 
-</android.support.design.widget.CoordinatorLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/view_group_animation"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true"
+            android:text="Don't touch anything"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -7,6 +7,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -104,7 +105,8 @@ public abstract class RippleView extends View {
     }
 
     protected void initView(Context context, AttributeSet attrs) {
-        this.setVisibility(INVISIBLE);
+        setVisibility(INVISIBLE);
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Wrapper);
         mRippleBackgroundColor = a.getColor(R.styleable.Wrapper_animator_ripple_background, getResources().getColor(android.R.color.darker_gray));
         mRippleColor = a.getColor(R.styleable.Wrapper_animator_ripple_color, getResources().getColor(R.color.default_ripple_color));
@@ -149,6 +151,9 @@ public abstract class RippleView extends View {
 
     protected abstract float calculateScale();
 
+    /**
+     * called before perform animation
+     */
     protected void prePerformAnimation() {
 
     }
