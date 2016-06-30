@@ -283,10 +283,12 @@ public class Wrapper extends ViewGroup {
         } else {
             v = mRootView;
         }
-        v.bringChildToFront(mRippleView);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            v.requestLayout();
-            v.invalidate();
+        if (v != null) {
+            v.bringChildToFront(mRippleView);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                v.requestLayout();
+                v.invalidate();
+            }
         }
 
         if (mAutoHide) {
