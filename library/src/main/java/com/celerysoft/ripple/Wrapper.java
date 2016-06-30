@@ -297,8 +297,13 @@ public class Wrapper extends ViewGroup {
     }
 
     public void performAnimation() {
-        prePerformAnimation();
-        mRippleView.performAnimation();
+        post(new Runnable() {
+            @Override
+            public void run() {
+                prePerformAnimation();
+                mRippleView.performAnimation();
+            }
+        });
     }
 
     public void cancelAnimation() {
