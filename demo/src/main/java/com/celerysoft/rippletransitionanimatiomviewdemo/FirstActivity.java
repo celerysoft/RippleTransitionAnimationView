@@ -28,6 +28,7 @@ public class FirstActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.ripple_alpha_in, R.anim.ripple_alpha_out);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_first);
@@ -76,6 +77,7 @@ public class FirstActivity extends AppCompatActivity {
         });
 
         simulateLoadData();
+//        mRippleWrapper.performAnimation();
     }
 
     private void simulateLoadData() {

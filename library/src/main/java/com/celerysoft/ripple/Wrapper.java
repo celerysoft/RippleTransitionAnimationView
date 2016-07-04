@@ -40,6 +40,8 @@ public class Wrapper extends ViewGroup {
     private ViewGroup mRootView;
     private ViewGroup mParentView;
 
+    private boolean mIsAttachToWindow = false;
+
     public Wrapper(Context context) {
         super(context);
     }
@@ -78,6 +80,8 @@ public class Wrapper extends ViewGroup {
         if (!isInEditMode()) {
             setupRippleView();
         }
+
+        mIsAttachToWindow = true;
     }
 
     private void setupRippleView() {
@@ -296,14 +300,28 @@ public class Wrapper extends ViewGroup {
         }
     }
 
+    @Override
+    public boolean isAttachedToWindow() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return mIsAttachToWindow;
+        } else {
+            return super.isAttachedToWindow();
+        }
+    }
+
     public void performAnimation() {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                prePerformAnimation();
-                mRippleView.performAnimation();
-            }
-        });
+        if (isAttachedToWindow()) {
+            prePerformAnimation();
+            mRippleView.performAnimation();
+        } else {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    performAnimation();
+                }
+            });
+        }
+
     }
 
     public void cancelAnimation() {

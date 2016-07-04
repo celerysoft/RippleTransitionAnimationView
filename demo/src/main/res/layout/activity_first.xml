@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         app:animator_ripple_type="wipe_out"
-        app:animator_ripple_background="#FFFFFF"
+        app:animator_ripple_background="@color/colorPrimary"
         app:animator_ripple_duration="animator_short">
         <LinearLayout
             android:layout_width="wrap_content"
@@ -69,7 +69,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Loading..."/>
+                android:text="Loading..."
+                android:textColor="@android:color/white"/>
         </LinearLayout>
 
     </com.celerysoft.ripple.Wrapper>
