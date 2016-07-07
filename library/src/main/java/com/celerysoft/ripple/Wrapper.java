@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -61,7 +63,8 @@ public class Wrapper extends ViewGroup {
 //        mRippleBackgroundColor = a.getColor(R.styleable.Wrapper_animator_ripple_background, getResources().getColor(android.R.color.darker_gray));
 //        mRippleColor = a.getColor(R.styleable.Wrapper_animator_ripple_color, getResources().getColor(R.color.default_ripple_color));
 //        mAnimatorDuration = a.getInt(R.styleable.Wrapper_animator_ripple_duration, Const.SHORT_DURATION_TIME);
-        mInitialRadius = a.getDimension(R.styleable.Wrapper_animator_ripple_radius, getResources().getDimension(R.dimen.default_ripple_radius));
+//        mInitialRadius = a.getDimension(R.styleable.Wrapper_animator_ripple_radius, getResources().getDimension(R.dimen.default_ripple_radius));
+        mInitialRadius = a.getDimension(R.styleable.Wrapper_animator_ripple_radius, -1);
         mRippleType = a.getInt(R.styleable.Wrapper_animator_ripple_type, FILL_IN);
         mAutoHide = a.getBoolean(R.styleable.Wrapper_animator_ripple_auto_hide, true);
         a.recycle();
@@ -70,6 +73,7 @@ public class Wrapper extends ViewGroup {
             mRippleView = new RippleInView(context, attrs);
         } else if (mRippleType == WIPE_OUT) {
             mRippleView = new RippleOutView(context, attrs);
+            mInitialRadius = 0.1f;
         }
     }
 
@@ -102,8 +106,6 @@ public class Wrapper extends ViewGroup {
                     mParentView.requestLayout();
                     mParentView.invalidate();
                 }
-//                mParentView.requestLayout();
-//                mParentView.invalidate();
             }
 
             mParentView.post(new Runnable() {
@@ -129,8 +131,6 @@ public class Wrapper extends ViewGroup {
                     mRootView.requestLayout();
                     mRootView.invalidate();
                 }
-//                mRootView.requestLayout();
-//                mRootView.invalidate();
             }
 
             mRootView.post(new Runnable() {
@@ -183,8 +183,8 @@ public class Wrapper extends ViewGroup {
 
             int childViewCount = getChildCount();
 
-            int centerX = (r - l) / 2;
-            int centerY = (b - t) / 2;
+            int relativeCenterX = (r - l) / 2;
+            int relativeCenterY = (b - t) / 2;
 
             for (int i = 0; i < childViewCount; ++i) {
                 View childView = getChildAt(i);
@@ -192,10 +192,10 @@ public class Wrapper extends ViewGroup {
                 int width = childView.getMeasuredWidth();
                 int height = childView.getMeasuredHeight();
 
-                int left = centerX - width / 2;
-                int right = centerX + width / 2;
-                int top = centerY - height / 2;
-                int bottom = centerY + height / 2;
+                int left = relativeCenterX - width / 2;
+                int right = relativeCenterX + width / 2;
+                int top = relativeCenterY - height / 2;
+                int bottom = relativeCenterY + height / 2;
 
                 childView.layout(left, top, right, bottom);
             }
@@ -209,6 +209,10 @@ public class Wrapper extends ViewGroup {
 
         int[] location = new int[2];
         this.getLocationInWindow(location);
+
+        Rect frame = new Rect();
+        getWindowVisibleDisplayFrame(frame);
+        int statusBarHeight = frame.top;
 
         if (mParentView != null) {
             /****************************************************************
@@ -237,7 +241,7 @@ public class Wrapper extends ViewGroup {
                 mCenterX = location[0] + getMeasuredWidth() / 2 - parentViewLocation[0];
             }
             if (mCenterY == -1) {
-                mCenterY = location[1] - parentViewLocation[1] + rootViewLocation[1];
+                mCenterY = location[1] - statusBarHeight - parentViewLocation[1] + rootViewLocation[1] + getMeasuredHeight() / 2;
             }
 
         } else {
@@ -246,9 +250,8 @@ public class Wrapper extends ViewGroup {
                 mCenterX = location[0] + getMeasuredWidth() / 2;
             }
             if (mCenterY == -1) {
-                mCenterY = location[1];
+                mCenterY = location[1] - statusBarHeight + getMeasuredHeight() / 2;
             }
-
         }
 
         mRippleView.setCenterX(mCenterX);
@@ -345,7 +348,7 @@ public class Wrapper extends ViewGroup {
     }
 
     public void addAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {
-       mRippleView.addAnimatorListenerAdapter(animatorListenerAdapter);
+        mRippleView.addAnimatorListenerAdapter(animatorListenerAdapter);
     }
 
     public void removeAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {

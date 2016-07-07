@@ -26,13 +26,7 @@ public class RippleInView extends RippleView {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        calculateCenterOfRipple(right, bottom);
-    }
-
-    @Override
     public void layout(int l, int t, int r, int b) {
-        calculateCenterOfRipple(r, b);
         super.layout(mCenterX - mRadius, mCenterY - mRadius, mCenterX + mRadius, mCenterY + mRadius);
     }
 
@@ -122,14 +116,5 @@ public class RippleInView extends RippleView {
         scale = Math.max(scale, scaleBottomRight);
 
         return scale;
-    }
-
-    protected void calculateCenterOfRipple(int right, int bottom) {
-        if (mCenterX == -1) {
-            mCenterX = (int) (right - mInitialRadius);
-        }
-        if (mCenterY == -1) {
-            mCenterY = (int) (bottom - mInitialRadius);
-        }
     }
 }

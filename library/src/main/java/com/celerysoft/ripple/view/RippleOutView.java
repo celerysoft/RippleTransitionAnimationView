@@ -73,10 +73,6 @@ public class RippleOutView extends RippleView {
      * @return
      */
     private Bitmap createBitmapFromARGB(int colorARGB, int width, int height) {
-//        String a = "";
-//        colorARGB |= 0xFF000000;
-//        colorARGB = colorARGB | 0xFF000000;
-
         int[] argb = new int[width * height];
 
         for (int i = 0; i < argb.length; i++) {
