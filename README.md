@@ -24,9 +24,13 @@ Ripple Transition Animation is a transition animation for Android. You can use i
 
 ```
 dependencies {
-    compile 'com.celerysoft:rippletransitionanimationview:0.4.0'
+    compile 'com.celerysoft:rippletransitionanimationview:0.6.7'
 }
 ```
+
+The version above may not the latest version of Ripple Transition Animation, you can click the icon below to get current version name.
+
+[![https://bintray.com/celerysoft/maven/RippleTransitionAnimationView?source=watch](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/celerysoft/maven/RippleTransitionAnimationView?source=watch)
 
 ### Step 2
 
@@ -47,22 +51,24 @@ if there is a FloatingActionButton in your layout like below
 then change your layout like this
 
 ```
-<com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup
-    android:id="@+id/view_group_animation"
+<com.celerysoft.ripple.Wrapper
+    android:id="@+id/fab_ripple_wrapper"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom|end"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
     android:layout_margin="16dp"
+    app:animator_ripple_type="fill_in"
+    app:animator_ripple_color="@color/colorAccent"
     app:animator_ripple_duration="animator_long"
-    app:animator_ripple_color="@color/colorPrimary">
+    app:animator_ripple_radius="28dp">
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/first_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
         android:src="@android:drawable/ic_media_play"/>
-</com.celerysoft.rippletransitionanimationview.RippleTransitionAnimationViewGroup>
+</com.celerysoft.ripple.Wrapper>
 ```
 
 ### Step 3
@@ -76,8 +82,8 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 
     setContentView(R.layout.activity_first);
 
-    final RippleTransitionAnimationViewGroup animationViewGroup = (RippleTransitionAnimationViewGroup) findViewById(R.id.view_group_animation);
-    animationViewGroup.setAnimatorListenerAdapter(new AnimatorListenerAdapter() {
+    final Wrapper wrapper = (Wrapper) findViewById(R.id.fab_ripple_wrapper);
+    wrapper.setAnimatorListenerAdapter(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
             Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
@@ -90,7 +96,6 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 
     final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.first_btn);
     if (fab != null) {
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +108,6 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
                 }, 150);
             }
         });
-
     }
 }
 ```
