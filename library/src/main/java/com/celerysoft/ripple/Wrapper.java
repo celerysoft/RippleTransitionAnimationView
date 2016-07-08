@@ -29,6 +29,8 @@ public class Wrapper extends ViewGroup implements Animatable {
     private int mCenterX = -1;
     private int mCenterY = -1;
 
+    private int mRippleViewParentId;
+
     protected float mInitialRadius = -1;
     //protected int mRippleBackgroundColor;
     //protected int mRippleColor;
@@ -62,6 +64,7 @@ public class Wrapper extends ViewGroup implements Animatable {
 //        mRippleColor = a.getColor(R.styleable.Wrapper_animator_ripple_color, getResources().getColor(R.color.default_ripple_color));
 //        mAnimatorDuration = a.getInt(R.styleable.Wrapper_animator_ripple_duration, Const.SHORT_DURATION_TIME);
 //        mInitialRadius = a.getDimension(R.styleable.Wrapper_animator_ripple_radius, getResources().getDimension(R.dimen.default_ripple_radius));
+        mRippleViewParentId = a.getResourceId(R.styleable.Wrapper_animator_ripple_parent_id, -1);
         mInitialRadius = a.getDimension(R.styleable.Wrapper_animator_ripple_radius, -1);
         mRippleType = a.getInt(R.styleable.Wrapper_animator_ripple_type, FILL_IN);
         mAutoHide = a.getBoolean(R.styleable.Wrapper_animator_ripple_auto_hide, true);
@@ -87,7 +90,16 @@ public class Wrapper extends ViewGroup implements Animatable {
     }
 
     private void setupRippleView() {
-        mParentView = (ViewGroup) getRootView().findViewById(R.id.ripple_animation_parent);
+        if (mRippleViewParentId != -1) {
+            mParentView = (ViewGroup) getRootView().findViewById(mRippleViewParentId);
+            if (mParentView != null) {
+                View self = mParentView.findViewById(getId());
+                if (self == null || !self.equals(this)) {
+                    throw new RuntimeException("The defined ripple parent need to be a parent of the Wrapper");
+                }
+            }
+        }
+
         mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
         if (mParentView != null) {
             if (mParentView instanceof RelativeLayout) {

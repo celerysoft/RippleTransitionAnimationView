@@ -24,7 +24,7 @@ Ripple Transition Animation is a transition animation for Android. You can use i
 
 ```
 dependencies {
-    compile 'com.celerysoft:rippletransitionanimationview:0.6.7'
+    compile 'com.celerysoft:rippletransitionanimationview:0.6.8'
 }
 ```
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="Wrapper">
+        <attr name="animator_ripple_parent_id" format="reference"/>
         <attr name="animator_ripple_background" format="color"/>
         <attr name="animator_ripple_color" format="color"/>
         <attr name="animator_ripple_radius" format="dimension"/>
