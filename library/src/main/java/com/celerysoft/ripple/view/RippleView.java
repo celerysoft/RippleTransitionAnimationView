@@ -7,21 +7,21 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
+import com.celerysoft.ripple.Animatable;
+import com.celerysoft.ripple.R;
 import com.celerysoft.ripple.util.Const;
-import com.celerysoft.rippletransitionanimationview.R;
 
 /**
  * Created by Celery on 16/6/24.
  *
  */
-public abstract class RippleView extends View {
+public abstract class RippleView extends View implements Animatable {
     protected Paint mPaint;
 
     protected int mRippleBackgroundColor;
@@ -158,6 +158,7 @@ public abstract class RippleView extends View {
 
     }
 
+    @Override
     public void performAnimation() {
         prePerformAnimation();
 

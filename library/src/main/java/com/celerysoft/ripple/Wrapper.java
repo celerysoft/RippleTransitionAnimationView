@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -15,13 +14,12 @@ import android.widget.RelativeLayout;
 import com.celerysoft.ripple.view.RippleInView;
 import com.celerysoft.ripple.view.RippleOutView;
 import com.celerysoft.ripple.view.RippleView;
-import com.celerysoft.rippletransitionanimationview.R;
 
 /**
  * Created by Celery on 16/5/18.
  *
  */
-public class Wrapper extends ViewGroup {
+public class Wrapper extends ViewGroup implements Animatable {
     /* Animation Type */
     public static final int FILL_IN = 0;
     public static final int WIPE_OUT = 1;
@@ -73,7 +71,7 @@ public class Wrapper extends ViewGroup {
             mRippleView = new RippleInView(context, attrs);
         } else if (mRippleType == WIPE_OUT) {
             mRippleView = new RippleOutView(context, attrs);
-            mInitialRadius = 0.1f;
+            mInitialRadius = mInitialRadius != -1 ? mInitialRadius : 0.1f;
         }
     }
 
@@ -312,6 +310,7 @@ public class Wrapper extends ViewGroup {
         }
     }
 
+    @Override
     public void performAnimation() {
         if (isAttachedToWindow()) {
             prePerformAnimation();

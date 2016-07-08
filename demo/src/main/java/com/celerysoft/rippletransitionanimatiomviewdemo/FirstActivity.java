@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.celerysoft.ripple.Wrapper;
-import com.celerysoft.ripple.view.RippleInView;
 
 /**
  * Created by Celery on 16/5/19.

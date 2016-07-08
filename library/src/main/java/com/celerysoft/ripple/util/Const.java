@@ -1,7 +1,8 @@
 package com.celerysoft.ripple.util;
 
 /**
- * Created by admin on 16/6/24.
+ * Created by Celery on 16/6/24.
+ * Include some const
  */
 public class Const {
     /* Animation Duration */

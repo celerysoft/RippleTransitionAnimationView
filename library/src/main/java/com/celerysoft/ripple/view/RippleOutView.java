@@ -1,18 +1,14 @@
 package com.celerysoft.ripple.view;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
-import android.util.Log;
 
-import com.celerysoft.ripple.util.Const;
 import com.celerysoft.ripple.util.Util;
-import com.celerysoft.rippletransitionanimationview.R;
 
 /**
  * Created by Celery on 16/6/24.

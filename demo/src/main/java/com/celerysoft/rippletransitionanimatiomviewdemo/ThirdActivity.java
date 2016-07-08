@@ -13,7 +13,7 @@ import android.view.View;
 import com.celerysoft.ripple.Wrapper;
 
 /**
- * Created by Celery on 16/5/26.
+ * Created by Celery on 16/5/20.
  *
  */
 public class ThirdActivity extends AppCompatActivity {
@@ -30,9 +30,8 @@ public class ThirdActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("3. Don't overflow parent");
+            actionBar.setTitle("2. Third Activity");
         }
-
 
         mAnimationViewGroup = (Wrapper) findViewById(R.id.view_group_animation);
         mAnimationViewGroup.addAnimatorListenerAdapter(new AnimatorListenerAdapter() {

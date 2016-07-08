@@ -20,6 +20,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
+        android:id="@id/ripple_animation_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -27,27 +28,25 @@
             android:id="@+id/view_group_animation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
             app:animator_ripple_duration="animator_long"
+            app:animator_ripple_color="@color/colorPrimaryDark"
             app:animator_ripple_auto_hide="false"
-            app:animator_ripple_color="@color/colorPrimary">
+            app:animator_ripple_type="fill_in">
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/second_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorPrimaryDark"
                 android:text="PLAY"/>
         </com.celerysoft.ripple.Wrapper>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/view_group_animation"
-            android:layout_marginTop="16dp"
-            android:layout_centerHorizontal="true"
-            android:text="Don't touch anything"/>
 
     </RelativeLayout>
 
 </LinearLayout>
+
