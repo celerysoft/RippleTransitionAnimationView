@@ -96,11 +96,28 @@ public class Wrapper extends ViewGroup implements Animatable {
         if (mRippleViewParentId != -1) {
             mParentView = (ViewGroup) getRootView().findViewById(mRippleViewParentId);
             if (mParentView != null) {
-                View self = mParentView.findViewById(getId());
-                if (self == null || !self.equals(this)) {
-                    //throw new RuntimeException("The defined ripple parent need to be a parent of the Wrapper");
-                    Log.w(TAG, "The defined ripple parent isn't a parent of the Wrapper in the layout, please make sure no display issues there.");
-                }
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int[] parentLocation = new int[2];
+                        mParentView.getLocationInWindow(parentLocation);
+                        int parentTop = parentLocation[1];
+                        int parentLeft = parentLocation[0];
+                        int parentRight = parentLeft + mParentView.getWidth();
+                        int parentBottom = parentTop + mParentView.getHeight();
+
+                        int [] wrapperLocation = new int[2];
+                        Wrapper.this.getLocationInWindow(wrapperLocation);
+                        int top = wrapperLocation[1];
+                        int left = wrapperLocation[0];
+                        int right = left + Wrapper.this.getWidth();
+                        int bottom = top + Wrapper.this.getHeight();
+
+                        if (top < parentTop || left < parentLeft || right > parentRight || bottom > parentBottom) {
+                            throw new RuntimeException("The wrapper isn't covered by the defined ripple parent, it can cause displaying issues, please make the ripple parent rect cover the wrapper rect.");
+                        }
+                    }
+                });
             }
         }
 
