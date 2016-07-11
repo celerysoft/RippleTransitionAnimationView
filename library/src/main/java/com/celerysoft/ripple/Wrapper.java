@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -20,6 +21,8 @@ import com.celerysoft.ripple.view.RippleView;
  *
  */
 public class Wrapper extends ViewGroup implements Animatable {
+    private static final String TAG = "Wrapper";
+
     /* Animation Type */
     public static final int FILL_IN = 0;
     public static final int WIPE_OUT = 1;
@@ -95,7 +98,8 @@ public class Wrapper extends ViewGroup implements Animatable {
             if (mParentView != null) {
                 View self = mParentView.findViewById(getId());
                 if (self == null || !self.equals(this)) {
-                    throw new RuntimeException("The defined ripple parent need to be a parent of the Wrapper");
+                    //throw new RuntimeException("The defined ripple parent need to be a parent of the Wrapper");
+                    Log.w(TAG, "The defined ripple parent isn't a parent of the Wrapper in the layout, please make sure no display issues there.");
                 }
             }
         }
