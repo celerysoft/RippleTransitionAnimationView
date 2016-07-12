@@ -82,6 +82,15 @@ public class Wrapper extends ViewGroup implements Animatable {
     }
 
     @Override
+    public boolean isAttachedToWindow() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return mIsAttachToWindow;
+        } else {
+            return super.isAttachedToWindow();
+        }
+    }
+
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
@@ -93,35 +102,22 @@ public class Wrapper extends ViewGroup implements Animatable {
     }
 
     private void setupRippleView() {
+        warnAboutChildCount();
+
+        mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
+
         if (mRippleViewParentId != -1) {
             mParentView = (ViewGroup) getRootView().findViewById(mRippleViewParentId);
             if (mParentView != null) {
                 post(new Runnable() {
                     @Override
                     public void run() {
-                        int[] parentLocation = new int[2];
-                        mParentView.getLocationInWindow(parentLocation);
-                        int parentTop = parentLocation[1];
-                        int parentLeft = parentLocation[0];
-                        int parentRight = parentLeft + mParentView.getWidth();
-                        int parentBottom = parentTop + mParentView.getHeight();
-
-                        int [] wrapperLocation = new int[2];
-                        Wrapper.this.getLocationInWindow(wrapperLocation);
-                        int top = wrapperLocation[1];
-                        int left = wrapperLocation[0];
-                        int right = left + Wrapper.this.getWidth();
-                        int bottom = top + Wrapper.this.getHeight();
-
-                        if (top < parentTop || left < parentLeft || right > parentRight || bottom > parentBottom) {
-                            throw new RuntimeException("The wrapper isn't covered by the defined ripple parent, it can cause displaying issues, please make the ripple parent rect cover the wrapper rect.");
-                        }
+                        verifyParentView();
                     }
                 });
             }
         }
 
-        mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
         if (mParentView != null) {
             if (mParentView instanceof RelativeLayout) {
                 if (mRippleView.getParent() == null) {
@@ -147,13 +143,8 @@ public class Wrapper extends ViewGroup implements Animatable {
                 }
             });
         } else {
-//            if (mRootView instanceof RelativeLayout) {
-//                if (mRootView.getParent() == null) {
-//                    mRootView.addView(mRippleView, 0, new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-//                }
-//            } else {
-//                mRootView.addView(mRippleView);
-//            }
+            verifyIsRootViewAIllegalViewGroupType();
+
             mRootView.addView(mRippleView);
 
             if (mRippleType == WIPE_OUT) {
@@ -171,6 +162,53 @@ public class Wrapper extends ViewGroup implements Animatable {
                     mRippleView.setForcedHeight(mRootView.getHeight());
                 }
             });
+        }
+    }
+
+    /**
+     * All the children of Wrapper will lay at the center of the Wrapper,
+     * in case of the display issues, you'd better keep only 1 child, if you have more than 1 child,
+     * you can use RelativeLayout, LinearLayout and etc to wrap all the Children.
+     */
+    private void warnAboutChildCount() {
+        if (getChildCount() > 1) {
+            Log.w(TAG, "All the children of Wrapper will lay at the center of the Wrapper,"
+            + "in case of the display issues, you'd better keep only 1 child, if you have more than 1 child,"
+            + "you can use RelativeLayout, LinearLayout and etc to wrap all the Children.");
+        }
+    }
+
+    /**
+     * verify if the Wrapper is covered by the defined parent view,
+     * if not, obvious, will be a animation-display disaster.
+     */
+    private void verifyParentView() {
+        int[] parentLocation = new int[2];
+        mParentView.getLocationInWindow(parentLocation);
+        int parentTop = parentLocation[1];
+        int parentLeft = parentLocation[0];
+        int parentRight = parentLeft + mParentView.getWidth();
+        int parentBottom = parentTop + mParentView.getHeight();
+
+        int [] wrapperLocation = new int[2];
+        Wrapper.this.getLocationInWindow(wrapperLocation);
+        int top = wrapperLocation[1];
+        int left = wrapperLocation[0];
+        int right = left + Wrapper.this.getWidth();
+        int bottom = top + Wrapper.this.getHeight();
+
+        if (top < parentTop || left < parentLeft || right > parentRight || bottom > parentBottom) {
+            throw new RuntimeException("The wrapper isn't covered by the defined ripple parent, it can cause displaying issues, please make the ripple parent rect cover the wrapper rect.");
+        }
+    }
+
+    private void verifyIsRootViewAIllegalViewGroupType() {
+        String type = mRootView.getClass().getSimpleName();
+
+        if(type.equals("DrawerLayout")) {
+            throw new RuntimeException("the root view is DrawerLayout, it could be cause some issue when display the ripple animation,"
+            + "please define the primary content view(the first child of DrawerLayout) or other view under the primary content view"
+            + "as the ripple view's parent, use animator_ripple_parent_id to define it.");
         }
     }
 
@@ -331,15 +369,6 @@ public class Wrapper extends ViewGroup implements Animatable {
 
         if (mAutoHide) {
             setVisibility(GONE);
-        }
-    }
-
-    @Override
-    public boolean isAttachedToWindow() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return mIsAttachToWindow;
-        } else {
-            return super.isAttachedToWindow();
         }
     }
 

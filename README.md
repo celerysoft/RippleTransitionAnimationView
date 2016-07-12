@@ -24,13 +24,15 @@ Ripple Transition Animation is a transition animation for Android. You can use i
 
 ```
 dependencies {
-    compile 'com.celerysoft:rippletransitionanimationview:0.6.8'
+    compile 'com.celerysoft:rippletransitionanimationview:0.7.0'
 }
 ```
 
 The version above may not the latest version of Ripple Transition Animation, you can click the icon below to get current version name.
 
 [![https://bintray.com/celerysoft/maven/RippleTransitionAnimationView?source=watch](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/celerysoft/maven/RippleTransitionAnimationView?source=watch)
+
+The version also follow the [Semantic Versioning](http://semver.org/).
 
 ### Step 2
 
