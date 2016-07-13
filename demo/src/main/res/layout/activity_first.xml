@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -21,36 +21,54 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
         android:textSize="20sp"
         android:text="We simulate load data from the Internet so this is the data from the Internet :D\n\nWell, nothing to say except for copying.Well, nothing to say except for copying.Well, nothing to say except for copying.Well, nothing to say except for copying.Well, nothing to say except for copying.Well, nothing to say except for copying.Well, nothing to say except for copying."/>
 
-    <com.celerysoft.ripple.Wrapper
-        android:id="@+id/fab_ripple_wrapper"
+    <!-- if you use Wrapper to wrap the FloatingActionButton, will cause some issue of compatibility. yep, it is the CoordinatorLayout behavior. -->
+    <!--<com.celerysoft.ripple.Wrapper-->
+        <!--android:id="@+id/fab_ripple_wrapper"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="16dp"-->
+        <!--app:animator_ripple_type="fill_in"-->
+        <!--app:animator_ripple_color="@color/colorAccent"-->
+        <!--app:animator_ripple_duration="animator_long"-->
+        <!--app:animator_ripple_radius="28dp">-->
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/first_btn"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@android:drawable/ic_media_play"/>-->
+    <!--</com.celerysoft.ripple.Wrapper>-->
+
+    <!-- RippleInView and FloatingActionButton must be in the same place -->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/first_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        app:animator_ripple_type="fill_in"
+        android:src="@android:drawable/ic_media_play"/>
+    <com.celerysoft.ripple.view.RippleInView
+        android:id="@+id/fab_ripple_animator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
         app:animator_ripple_color="@color/colorAccent"
         app:animator_ripple_duration="animator_long"
-        app:animator_ripple_radius="28dp">
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/first_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_media_play"/>
-    </com.celerysoft.ripple.Wrapper>
+        app:animator_ripple_radius="28dp"/>
 
     <com.celerysoft.ripple.Wrapper
         android:id="@+id/ripple_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         app:animator_ripple_type="wipe_out"
         app:animator_ripple_background="@color/colorPrimary"
         app:animator_ripple_duration="animator_short">
@@ -75,4 +93,4 @@
 
     </com.celerysoft.ripple.Wrapper>
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

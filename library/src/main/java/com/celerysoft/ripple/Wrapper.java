@@ -172,8 +172,8 @@ public class Wrapper extends ViewGroup implements Animatable {
      */
     private void warnAboutChildCount() {
         if (getChildCount() > 1) {
-            Log.w(TAG, "All the children of Wrapper will lay at the center of the Wrapper,"
-            + "in case of the display issues, you'd better keep only 1 child, if you have more than 1 child,"
+            Log.w(TAG, "All the children of Wrapper will lay at the center of the Wrapper, "
+            + "in case of the display issues, you'd better keep only 1 child, if you have more than 1 child, "
             + "you can use RelativeLayout, LinearLayout and etc to wrap all the Children.");
         }
     }
@@ -206,8 +206,8 @@ public class Wrapper extends ViewGroup implements Animatable {
         String type = mRootView.getClass().getSimpleName();
 
         if(type.equals("DrawerLayout")) {
-            throw new RuntimeException("the root view is DrawerLayout, it could be cause some issue when display the ripple animation,"
-            + "please define the primary content view(the first child of DrawerLayout) or other view under the primary content view"
+            throw new RuntimeException("the root view is DrawerLayout, it could be cause some issue when display the ripple animation, "
+            + "please define the primary content view(the first child of DrawerLayout) or other view under the primary content view "
             + "as the ripple view's parent, use animator_ripple_parent_id to define it.");
         }
     }
