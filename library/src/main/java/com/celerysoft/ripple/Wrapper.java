@@ -12,9 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.celerysoft.ripple.util.ReflectionUtil;
 import com.celerysoft.ripple.view.RippleInView;
 import com.celerysoft.ripple.view.RippleOutView;
 import com.celerysoft.ripple.view.RippleView;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Created by Celery on 16/5/18.
@@ -46,6 +51,9 @@ public class Wrapper extends ViewGroup implements Animatable {
     private ViewGroup mParentView;
 
     private boolean mIsAttachToWindow = false;
+
+    private boolean mIsChildContainFloatingActionButton = false;
+    private float mFloatingActionButtonMaxShadow = 0;
 
     public Wrapper(Context context) {
         super(context);
@@ -104,7 +112,7 @@ public class Wrapper extends ViewGroup implements Animatable {
     private void setupRippleView() {
         warnAboutChildCount();
 
-        mRootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
+        mRootView = findRootView();
 
         if (mRippleViewParentId != -1) {
             mParentView = (ViewGroup) getRootView().findViewById(mRippleViewParentId);
@@ -173,8 +181,8 @@ public class Wrapper extends ViewGroup implements Animatable {
     private void warnAboutChildCount() {
         if (getChildCount() > 1) {
             Log.w(TAG, "All the children of Wrapper will lay at the center of the Wrapper, "
-            + "in case of the display issues, you'd better keep only 1 child, if you have more than 1 child, "
-            + "you can use RelativeLayout, LinearLayout and etc to wrap all the Children.");
+                    + "in case of the display issues, you'd better keep only 1 child, if you have more than 1 child, "
+                    + "you can use RelativeLayout, LinearLayout and etc to wrap all the Children.");
         }
     }
 
@@ -202,14 +210,34 @@ public class Wrapper extends ViewGroup implements Animatable {
         }
     }
 
+    private ViewGroup findRootView() {
+        ViewGroup rootView = (ViewGroup) ((ViewGroup) (getRootView().findViewById(android.R.id.content))).getChildAt(0);
+
+        if (rootView.getClass().getSimpleName().equals("DrawerLayout")) {
+            rootView = (ViewGroup) rootView.getChildAt(0);
+        }
+
+        return rootView;
+    }
+
+    @Deprecated
     private void verifyIsRootViewAIllegalViewGroupType() {
         String type = mRootView.getClass().getSimpleName();
 
         if(type.equals("DrawerLayout")) {
             throw new RuntimeException("the root view is DrawerLayout, it could be cause some issue when display the ripple animation, "
-            + "please define the primary content view(the first child of DrawerLayout) or other view under the primary content view "
-            + "as the ripple view's parent, use animator_ripple_parent_id to define it.");
+                    + "please define the primary content view(the first child of DrawerLayout) or other view under the primary content view "
+                    + "as the ripple view's parent, use animator_ripple_parent_id to define it.");
         }
+    }
+
+    private float getFloatingActionButtonShadowSize(Object fab) {
+        Object fabImpl = ReflectionUtil.getFieldValue(fab, "mImpl");
+
+        float a = (float) ReflectionUtil.getFieldValue(fabImpl, "mPressedTranslationZ");
+        float b = (float) ReflectionUtil.invokeMethod(fabImpl, "getElevation");
+
+        return a + b;
     }
 
     @Override
@@ -234,6 +262,12 @@ public class Wrapper extends ViewGroup implements Animatable {
             childWidth = childView.getMeasuredWidth();
             childHeight = childView.getMeasuredHeight();
 
+//            if (childView.getClass().getSimpleName().equals("FloatingActionButton")) {
+//                mIsChildContainFloatingActionButton = true;
+//                mFloatingActionButtonMaxShadow = getFloatingActionButtonShadowSize(childView);
+//                childHeight += mFloatingActionButtonMaxShadow;
+//            }
+
             measureWidth = measureWidth > childWidth ? measureWidth : childWidth;
             measureHeight = measureHeight > childHeight ? measureHeight : childHeight;
         }
@@ -253,7 +287,7 @@ public class Wrapper extends ViewGroup implements Animatable {
             int childViewCount = getChildCount();
 
             int relativeCenterX = (r - l) / 2;
-            int relativeCenterY = (b - t) / 2;
+            int relativeCenterY = (b - t ) / 2;
 
             for (int i = 0; i < childViewCount; ++i) {
                 View childView = getChildAt(i);

@@ -48,6 +48,9 @@ public abstract class RippleView extends View implements Animatable {
         return mForcedWidth;
     }
     public void setForcedWidth(int forcedWidth) {
+        if (forcedWidth <= 0) {
+            return;
+        }
         mForcedWidth = forcedWidth;
     }
 
@@ -56,6 +59,9 @@ public abstract class RippleView extends View implements Animatable {
         return mForcedHeight;
     }
     public void setForcedHeight(int forcedHeight) {
+        if (forcedHeight <= 0) {
+            return;
+        }
         mForcedHeight = forcedHeight;
     }
 

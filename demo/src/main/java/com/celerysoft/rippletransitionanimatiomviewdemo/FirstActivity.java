@@ -27,7 +27,7 @@ public class FirstActivity extends AppCompatActivity {
     ProgressBar mProgressBar;
     Wrapper mRippleWrapper;
     FloatingActionButton mFloatingActionButton;
-    RippleInView mFabRippleWrapper;
+    Wrapper mFabRippleWrapper;
 
     private long mLastPressBackTime;
 
@@ -70,7 +70,7 @@ public class FirstActivity extends AppCompatActivity {
                 }
             });
         }
-        mFabRippleWrapper = (RippleInView) findViewById(R.id.fab_ripple_animator);
+        mFabRippleWrapper = (Wrapper) findViewById(R.id.fab_ripple_wrapper);
         mFabRippleWrapper.addAnimatorListenerAdapter(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
