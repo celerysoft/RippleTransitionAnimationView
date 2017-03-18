@@ -16,6 +16,7 @@ import com.celerysoft.ripple.util.Util;
  */
 public class RippleOutView extends RippleView {
     private Bitmap mBitmap;
+    private Bitmap mCoverBitmap;
     private Canvas mCanvas;
 
     private float mScale = -1;
@@ -72,40 +73,44 @@ public class RippleOutView extends RippleView {
         int[] argb = new int[width * height];
 
         for (int i = 0; i < argb.length; i++) {
-
             argb[i] = colorARGB;
-
         }
+
         return Bitmap.createBitmap(argb, width, height, Bitmap.Config.ARGB_8888);
     }
 
     /**
-     *
-     * @param bm
-     * @param alpha ,alpha should be between 0 and 255
-     * @note set bitmap's alpha
+     * set alpha for a bitmap
+     * @param bm the bitmap to be set
+     * @param alpha alpha should be between 0 and 255
      * @return
      */
     private Bitmap setBitmapAlpha(Bitmap bm, int alpha) {
-        int[] argb = new int[bm.getWidth() * bm.getHeight()];
-        bm.getPixels(argb, 0, bm.getWidth(), 0, 0, bm.getWidth(), bm
-                .getHeight());
+        try {
+            int[] argb = new int[bm.getWidth() * bm.getHeight()];
+            bm.getPixels(argb, 0, bm.getWidth(), 0, 0, bm.getWidth(), bm.getHeight());
 
-        for (int i = 0; i < argb.length; i++) {
+            for (int i = 0; i < argb.length; i++) {
+                argb[i] = ((alpha << 24) | (argb[i] & 0x00FFFFFF));
+            }
 
-            argb[i] = ((alpha << 24) | (argb[i] & 0x00FFFFFF));
+            return Bitmap.createBitmap(argb, bm.getWidth(), bm.getHeight(),
+                    Bitmap.Config.ARGB_8888);
+        } catch (OutOfMemoryError e) {
+            return bm;
         }
-        return Bitmap.createBitmap(argb, bm.getWidth(), bm.getHeight(),
-                Bitmap.Config.ARGB_8888);
     }
 
     /**
-     *
+     * set cover bitmap, which overlay on background.
      * @param bm
-     * @note set cover bitmap , which  overlay on background.
      */
     private void setCoverBitmap(Bitmap bm) {
         // converting bitmap into mutable bitmap
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            mBitmap.recycle();
+            mBitmap = null;
+        }
         mBitmap = Bitmap.createBitmap(mForcedWidth, mForcedHeight, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas();
         mCanvas.setBitmap(mBitmap);
@@ -155,23 +160,33 @@ public class RippleOutView extends RippleView {
 
     private void initCoverBitmap() {
         if (mForcedWidth != -1 && mForcedHeight != -1) {
-            //setBackgroundColor(mRippleBackgroundColor);
             setBackgroundColor(0x00FFFFFF);
-            // 1.if cover is a image,you can open MENU_ITEM_COMMENT bellow
-            Bitmap bm = createBitmapFromARGB(mRippleBackgroundColor, mForcedWidth, mForcedHeight);
+            // if cover is a color, you can open MENU_ITEM_COMMENT bellow
+            if (mCoverBitmap != null && !mCoverBitmap.isRecycled()) {
+                mCoverBitmap.recycle();
+                mCoverBitmap = null;
+            }
+            mCoverBitmap = createBitmapFromARGB(mRippleBackgroundColor, mForcedWidth, mForcedHeight);
             // if you want to set cover image's alpha,you can open MENU_ITEM_COMMENT bellow
-            bm = setBitmapAlpha(bm, 255);
+            mCoverBitmap = setBitmapAlpha(mCoverBitmap, 255);
             // if you want to scale cover image,you can open MENU_ITEM_COMMENT bellow
             //bm = scaleBitmapFillScreen(bm);
-
-            // 2.if cover is color
-            //Bitmap bm = createBitmapFromARGB(0x8800ff00, SCREEN_W, SCREEN_H);
-            setCoverBitmap(bm);
+            setCoverBitmap(mCoverBitmap);
         }
     }
 
     @Override
     protected void prePerformAnimation() {
         initCoverBitmap();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            mBitmap.recycle();
+        }
+        if (mCoverBitmap != null && !mCoverBitmap.isRecycled()) {
+            mCoverBitmap.recycle();
+        }
     }
 }

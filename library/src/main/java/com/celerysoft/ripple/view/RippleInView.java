@@ -127,4 +127,9 @@ public class RippleInView extends RippleView {
             mCenterY = (int) (bottom - mInitialRadius);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+
+    }
 }
