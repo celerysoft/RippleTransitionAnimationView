@@ -3,7 +3,7 @@ version = PROJ_VERSION
 project.archivesBaseName = PROJ_ARTIFACTID
 
 apply plugin: 'com.jfrog.bintray'
-apply plugin: "com.jfrog.artifactory"
+//apply plugin: "com.jfrog.artifactory"
 apply plugin: 'maven-publish'
 
 task sourcesJar(type: Jar) {
@@ -32,7 +32,6 @@ javadoc {
         title PROJ_ARTIFACTID
     }
 }
-
 
 def pomConfig = {
     licenses {
@@ -91,32 +90,39 @@ bintray {
     pkg {
         repo = 'maven'
         name = PROJ_NAME
-        desc = PROJ_DESCRIPTION
-        websiteUrl = PROJ_WEBSITEURL
-        issueTrackerUrl = PROJ_ISSUETRACKERURL
-        vcsUrl = PROJ_VCSURL
         licenses = [PROJ_LICENSE]
+        vcsUrl = PROJ_VCSURL
+        userOrg = user
+
+        version {
+            name = PROJ_VERSION
+            released  = new Date()
+            desc = PROJ_VERSION_DESC
+            vcsTag = PROJ_VERSION
+//            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+        }
+
         publicDownloadNumbers = true
     }
 }
 
-artifactory {
-    contextUrl = 'http://oss.jfrog.org/artifactory'
-    resolve {
-        repository {
-            repoKey = 'libs-release'
-        }
-    }
-    publish {
-        repository {
-            repoKey = 'oss-snapshot-local' //The Artifactory repository key to publish to
-            username = bintray.user
-            password = bintray.key
-            //maven = true
-        }
-        defaults {
-            publications('mavenJava')
-            publishArtifacts = true
-        }
-    }
-}
+//artifactory {
+//    contextUrl = 'http://oss.jfrog.org/artifactory'
+//    resolve {
+//        repository {
+//            repoKey = 'libs-release'
+//        }
+//    }
+//    publish {
+//        repository {
+//            repoKey = 'oss-snapshot-local' //The Artifactory repository key to publish to
+//            username = bintray.user
+//            password = bintray.key
+//            //maven = true
+//        }
+//        defaults {
+//            publications('mavenJava')
+//            publishArtifacts = true
+//        }
+//    }
+//}

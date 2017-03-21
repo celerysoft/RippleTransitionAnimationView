@@ -216,9 +216,4 @@ public abstract class RippleView extends View implements Animatable {
     public void removeAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {
         mValueAnimator.removeListener(animatorListenerAdapter);
     }
-
-    /**
-     * recycle the Bitmap instance in case the OOM.
-     */
-    protected abstract void onDestroy();
 }
